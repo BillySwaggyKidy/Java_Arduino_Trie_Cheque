@@ -4,12 +4,16 @@ import cheque.Cheque;
 
 public class Case 
 {
-    private Cheque [] Tab_cheque;
+    private Cheque [] tab_Cheque;
 
     public Case()
     {
-        Tab_cheque = new Cheque[50]; // on crée un case pouvant contenir 50 chéques.
+        tab_Cheque = new Cheque[50]; // on crée un case pouvant contenir 50 chéques.
     }
 
+    public Cheque[] get_tab_Cheque()
+    {
+        return tab_Cheque;
+    }
 
 }

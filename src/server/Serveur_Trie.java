@@ -6,7 +6,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*; // permet de pouvoir faire du réseau avec java
 
-public class Serveur_Trie 
+public class Serveur_trie 
 {
     private static int num_port;
     private static boolean is_running = true;
