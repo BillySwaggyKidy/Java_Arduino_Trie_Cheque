@@ -1,5 +1,7 @@
 package server.meuble_classement;
 
+// javac -cp c:\../../../classes -d ../../../classes Meuble.java
+
 public class Meuble 
 {
     private Case [] tab_Case;

@@ -2,6 +2,8 @@ package server.meuble_classement;
 
 import cheque.Cheque;
 
+// javac -cp c:\../../../classes -d ../../../classes Case.java
+
 public class Case 
 {
     private Cheque [] tab_Cheque;

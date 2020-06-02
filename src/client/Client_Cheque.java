@@ -3,6 +3,12 @@ import java.util.*;
 import java.io.*;
 import java.net.*; // permet de pouvoir faire du réseau avec java
 
+import cheque.Cheque;
+
+// javac -cp c:\../../classes  -d ../../classes Client_cheque.java
+// java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar client.Client_cheque
+
+
 public class Client_cheque 
 {
     private static String hostName; // nom de l'hôte du serveur (147.94.7.152)
@@ -44,8 +50,10 @@ public class Client_cheque
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); // le int devient le int du clientSOcket pour recevoir les réponses du serveur
         )
         {
-            out.writeObject(nom_util);
-            Client_cheque.out = out; // on envoie un message au serveurs
+            int nbr = userInput.nextInt();
+            Cheque test_cheque = new Cheque(nbr);
+            out.writeObject(test_cheque); // on écrie un objet Cheque dans le out
+            Client_cheque.out = out; // on envoie un message de type Cheque au serveurs
             System.out.println("Chargement...");
             Thread.sleep(1000);
 
@@ -55,10 +63,10 @@ public class Client_cheque
         {
             System.err.println("Couldn't get I/O for the connection to " + hostName);
         } 
-        catch (ClassNotFoundException e)
+        /*catch (ClassNotFoundException e)
         {
             e.printStackTrace();
-        } 
+        }*/
     }
 
 }

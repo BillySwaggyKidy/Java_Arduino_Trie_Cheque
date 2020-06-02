@@ -4,13 +4,20 @@ public class Cheque
 {
     private String trigramme; // permet d'identifié une copropriété par 3 lettre MAJ
     private String numCompte; // numéro de compte bancaire de la corpopriété
+    private int num_Case; // TEMPORAIRE
 
 
 
 
-    public Cheque(String _trigramme) // constructeur de la classe Cheque.
+    public Cheque(int num) // constructeur de la classe Cheque.
     {
-        trigramme = _trigramme;
+        num_Case = num;
+    }
+
+
+    public int get_Num_case()
+    {
+        return num_Case;
     }
 
 
