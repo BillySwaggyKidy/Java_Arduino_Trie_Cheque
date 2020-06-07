@@ -11,6 +11,8 @@ import com.fazecast.jSerialComm.*;
 //javac -cp c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar -d ../../classes Serveur_trie.java
 //java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar server.Serveur_trie
 
+// ATTENTION: activer XAMPP avant de lancer le serveur pour que les clients se connectent
+
 public class Serveur_trie extends Thread
 {
     String name; // nom du client connecté au thread serveur
@@ -25,28 +27,39 @@ public class Serveur_trie extends Thread
         return num_donnee;
     }
 
-    private void envoie_donnee_arduino(Integer num_led) throws Exception 
-    // permet d'envoyer les données de l'algorithme à la partie Arduino
+    private void display_port()
     {
-        SerialPort sp = SerialPort.getCommPort("/dev/ttyACM1");
+        SerialPort[] ports = SerialPort.getCommPorts();
+        for (int i = 0; i < ports.length; i++) 
+        {
+        System.out.println(ports[i].getSystemPortName());
+        }
+    }
 
+    private void envoie_donnee_arduino(Integer num_led) throws Exception 
+    // permet d'envoyer les données de l'algorithme à la partie Arduino13
+    {
+        display_port();
+        SerialPort sp = SerialPort.getCommPort("/dev/cu.usbmodem1411"); // port de la carte aruino Mega 2650
+        System.out.println(sp.getDescriptivePortName());
         sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
         sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
     
         if (sp.openPort()) //ouvre le port en question en mode lecture et écriture
         {
             System.out.println("Port is open");
-        } 
+        }
         else 
         {
             System.out.println("Failed to open port");
             return;
         }
         
-      
-        sp.getOutputStream().write(num_led.byteValue()); // écrit les données en BYTE du serveur vers le port
-        sp.getOutputStream().flush(); // permet de forcet l'écriture des donnés du buffer
-        Thread.sleep(1000);      
+        System.out.println("thread sleep");
+        Thread.sleep(2000);    
+        System.out.println("byte value = " + num_led.byteValue());
+        sp.write(num_led.byteValue()); // écrit les données en BYTE du serveur vers le port
+        //sp.getOutputStream().flush(); // permet de forcet l'écriture des donnés du buffer  
           
         if (sp.closePort()) //ferme le port en question en mode lecture et écriture
         {
@@ -69,12 +82,15 @@ public class Serveur_trie extends Thread
 			ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
         )
         {
-            Object o = in.readObject();
-            if (o instanceof Cheque)
+            while(true)
             {
-                Cheque cheque = (Cheque) o;
-                System.out.println("info: " + cheque.get_Num_case());
-                envoie_donnee_arduino(algorithme_trie(cheque.get_Num_case()));
+                Object o = in.readObject();
+                if (o instanceof Cheque)
+                {
+                    Cheque cheque = (Cheque) o;
+                    System.out.println("info: " + cheque.get_Num_case());
+                    envoie_donnee_arduino(algorithme_trie(cheque.get_Num_case()));
+                }
             }
            /* else 
             if(o instanceof String) 
@@ -105,7 +121,7 @@ public class Serveur_trie extends Thread
     {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bienvenue au serveur, Veillez saisir...");
-        System.out.println("Votre numéro de port >");
+        System.out.println("Votre numéro de port >"); // ATTENTION, si vous avez pas le root privilege alors prenez un numéro de port > 1024
         int num_port = scanner.nextInt(); // on enregistre le numéro du
 
         try (
@@ -121,8 +137,10 @@ public class Serveur_trie extends Thread
         }
         catch (IOException e)
         {
-
+            System.err.println("Exception caught when trying to listen on port " + num_port);
+            System.err.println(e.getMessage());
         }
+        System.out.println("fermeture du serveur");
         scanner.close();
 
     }

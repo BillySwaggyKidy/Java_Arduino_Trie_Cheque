@@ -6,8 +6,7 @@ import java.net.*; // permet de pouvoir faire du réseau avec java
 import cheque.Cheque;
 
 // javac -cp c:\../../classes  -d ../../classes Client_cheque.java
-// java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar client.Client_cheque
-
+// java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar client.Client_cheque localhost 1300 
 
 public class Client_cheque 
 {
@@ -36,8 +35,8 @@ public class Client_cheque
         }
 
         System.out.println("Lancement du client");
-        hostName = args[1]; // on met le paramettre 1 de la ligne de commande dans la valeur hostName
-        numPort = Integer.parseInt(args[2]); // on met le paramettre 2 de la ligne de commande dans la valeur num_port
+        hostName = args[0]; // on met le paramettre 1 de la ligne de commande dans la valeur hostName
+        numPort = Integer.parseInt(args[1]); // on met le paramettre 2 de la ligne de commande dans la valeur num_port
         System.out.println("Veillez saisir votre nom: ");
         nom_util = userInput.nextLine();
         System.out.println("Connection au Serveur [" + "hôte: " + hostName + ", port: " + numPort + "] sous le nom: " + nom_util);
@@ -50,12 +49,17 @@ public class Client_cheque
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); // le int devient le int du clientSOcket pour recevoir les réponses du serveur
         )
         {
-            int nbr = userInput.nextInt();
-            Cheque test_cheque = new Cheque(nbr);
-            out.writeObject(test_cheque); // on écrie un objet Cheque dans le out
-            Client_cheque.out = out; // on envoie un message de type Cheque au serveurs
-            System.out.println("Chargement...");
-            Thread.sleep(1000);
+            while (true)
+            {
+                System.out.println("Veillez mettre le num d'un nombre d'une case: ");
+                int nbr = userInput.nextInt();
+                Cheque test_cheque = new Cheque(nbr);
+                out.writeObject(test_cheque); // on écrie un objet Cheque dans le out
+                Client_cheque.out = out; // on envoie un message de type Cheque au serveurs
+                System.out.println("Chargement...");
+                Thread.sleep(1000);
+            }
+
 
 
         }

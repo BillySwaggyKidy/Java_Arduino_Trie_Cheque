@@ -1,7 +1,10 @@
 package cheque;
 
-public class Cheque 
+import java.io.Serializable;
+
+public class Cheque implements Serializable 
 {
+    private static final long serialVersionUID = 1574334521640694846L;
     private String trigramme; // permet d'identifié une copropriété par 3 lettre MAJ
     private String numCompte; // numéro de compte bancaire de la corpopriété
     private int num_Case; // TEMPORAIRE
