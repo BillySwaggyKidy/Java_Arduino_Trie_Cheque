@@ -1,0 +1,157 @@
+#include <Wire.h>
+#include <stdio.h>
+
+const int ref_pin = 2;
+const int LIM_TAB = 5;
+
+char tab_carac[LIM_TAB]; // tableau récupérant les caractères ASCII envoyé par l'extérieur
+boolean newData = false;
+
+void all_led(int dep_led)
+{
+  for (int i = 0 ; i <= 4 ; i++)
+  {
+    for (int i = ref_pin; i < ref_pin + 10 ; i++)
+    {
+      digitalWrite(i,LOW);
+    }
+    delay(1000);
+  
+    for (int i = ref_pin; i < ref_pin + 10  ; i++)
+    {
+      digitalWrite(i,HIGH);
+    }
+    delay(1000);
+  }
+}
+
+boolean is_a_number(int n) // permet de voir si le nombre est un nombre ascci codé en décimal
+{
+  return n >= 48 && n <= 57;
+}
+
+int ascii2int(int n, int byte_read) // convertit le nombre en ascii en entier
+{
+  return n*10 + (byte_read - 48);
+  
+}
+
+
+/*int concat(int a, int b) 
+{ 
+  
+    char s1[20]; 
+    char s2[20]; 
+  
+    // Convert both the integers to string 
+    sprintf(s1, "%d", a); 
+    sprintf(s2, "%d", b); 
+  
+    // Concatenate both strings 
+    strcat(s1, s2); 
+  
+    // Convert the concatenated string 
+    // to integer 
+    int c = atoi(s1); 
+  
+    // return the formed integer 
+    return c; 
+}*/
+
+boolean is_test(char tab[])
+{
+  
+  if (strncmp(tab,"test",4) == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+
+//-------------------------------------------------------------------
+
+void setup() 
+{
+  // put your setup code here, to run once:
+  for (int i = ref_pin; i < ref_pin + 10 ; i++)
+  {
+    pinMode(i,OUTPUT);
+    digitalWrite(i,HIGH); // LED OFF
+    delay(2);
+  }
+  
+  Serial.begin(9600);
+  while (!Serial) 
+  {
+    ; // wait for serial port to connect.
+  }
+  Serial.print("Pin ready!");
+}
+
+
+
+void loop() 
+{
+  collectDataFromJava();
+  DataLightLED();
+  memset(tab_carac,0,sizeof(tab_carac)); // on vide le tableau
+  newData = false; // on remet à zéro puisque on lit une nouvelle donnée
+
+}
+
+
+void collectDataFromJava()
+{
+  int ndx = 0;
+  
+  while (newData == false)
+  {
+    
+    while (Serial.available() > 0) // tant que il reste des données à traiter et que on a pas fini de remplir tous les cases du tableau 
+    {
+        byte byte_read = Serial.read();
+        if (byte_read != '\n')
+        {
+          tab_carac[ndx] = byte_read;
+          ndx++;
+        }
+        else
+        {
+          tab_carac[ndx] = '\0';
+          ndx = 0;
+          newData = true;
+        }
+        
+    }
+  }
+}
+
+void DataLightLED()
+{
+  if (tab_carac[0] != '\0') // si on a fini d'avoir toutes les données envoyé depuis le Serial.
+  {
+    
+    if(is_test(tab_carac) == true)
+    {
+      all_led(ref_pin);
+    }
+    else
+    {
+      int pin_a_allumer = 0;
+      for (int b = 0; b < sizeof(tab_carac) ; b++)
+      {
+        if (is_a_number(tab_carac[b]))
+        {
+          pin_a_allumer = 10*(pin_a_allumer) + (ascii2int(0,tab_carac[b]));
+        }
+      }
+      digitalWrite(pin_a_allumer + 1,LOW); // LED OFF
+
+      
+    }
+  }
+}

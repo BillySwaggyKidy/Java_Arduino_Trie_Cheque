@@ -5,6 +5,7 @@ import cheque.Cheque;
 import java.util.*;
 import java.io.*;
 import java.net.*; // permet de pouvoir faire du réseau avec java
+import server.arduino.Com_arduino;
 
 import com.fazecast.jSerialComm.*;
 
@@ -27,24 +28,30 @@ public class Serveur_trie extends Thread
         return num_donnee;
     }
 
-    private void display_port()
+    /*private void display_port()
     {
         SerialPort[] ports = SerialPort.getCommPorts();
         for (int i = 0; i < ports.length; i++) 
         {
         System.out.println(ports[i].getSystemPortName());
         }
-    }
+    }*/
 
     private void envoie_donnee_arduino(Integer num_led) throws Exception 
     // permet d'envoyer les données de l'algorithme à la partie Arduino13
     {
-        display_port();
+
+        Com_arduino Arduino = new Com_arduino(10,2);
+        Arduino.lightLed(num_led);
+
+        /*display_port();
         SerialPort sp = SerialPort.getCommPort("/dev/cu.usbmodem1411"); // port de la carte aruino Mega 2650
         System.out.println(sp.getDescriptivePortName());
         sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
-        sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be written
-    
+        sp.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0); // block until bytes can be writte
+        PrintWriter diff_arduino = new PrintWriter(sp.getOutputStream());
+
+
         if (sp.openPort()) //ouvre le port en question en mode lecture et écriture
         {
             System.out.println("Port is open");
@@ -54,23 +61,49 @@ public class Serveur_trie extends Thread
             System.out.println("Failed to open port");
             return;
         }
+
+        sp.addDataListener(new SerialPortDataListener()  // on ajoute des listeners pour lire ce que renvoie la carte arduino
+        {
+            @Override
+            public int getListeningEvents() {
+                return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+            }
+
+            @Override
+            public void serialEvent(SerialPortEvent event) {
+                if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+                    return;
+                }
+                byte[] newData = new byte[sp.bytesAvailable()];
+                sp.readBytes(newData, 7);
+                String msg = new String(newData,sp.bytesAvailable());
+                System.out.println("DATA FROM ARDUINO: " + msg);
+            }
+        });
         
-        System.out.println("thread sleep");
-        Thread.sleep(2000);    
-        System.out.println("byte value = " + num_led.byteValue());
-        sp.write(num_led.byteValue()); // écrit les données en BYTE du serveur vers le port
-        //sp.getOutputStream().flush(); // permet de forcet l'écriture des donnés du buffer  
+        Thread.sleep(1000);
+        byte[] writeBuffer = new byte[8];
+        writeBuffer[0] = num_led.byteValue();
+
+        System.out.println("byte value = " + writeBuffer[0]);
+
+        diff_arduino.write(num_led.byteValue());
+        diff_arduino.flush();
+        //sp.writeBytes(writeBuffer,8); // écrit les données en BYTE du serveur vers le port
+        //sp.getOutputStream().flush(); // permet de forcet l'écriture des donnés du bufferx
           
         if (sp.closePort()) //ferme le port en question en mode lecture et écriture
         {
             System.out.println("Port is closed :)");
-        } 
+        }
         else 
         {
             System.out.println("Failed to close port :(");
             return;
           
-        }
+        }*/
+
+        
 
     }
 
@@ -117,7 +150,7 @@ public class Serveur_trie extends Thread
         this.clientSocket = clientSocket;
     }
 
-    public static void main(String[] args) throws IOException // a executer dans un autre ordinateur
+    public static void main(String[] args) throws IOException, Exception // a executer dans un autre ordinateur
     {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bienvenue au serveur, Veillez saisir...");
@@ -128,6 +161,11 @@ public class Serveur_trie extends Thread
         ServerSocket serverSocket = new ServerSocket(num_port); // on crée l'application serveur sur un port
         )
         {
+            scanner.nextLine();
+            Com_arduino test = new Com_arduino(10,2);
+            System.out.println("Voulez vous tester les LED? taper la commande: test");
+            String cmd = scanner.nextLine();
+            test.lightAllLed(cmd);
             while (true)
             {
                 Serveur_trie server = new Serveur_trie(serverSocket.accept()); // on attend et accepte la demande de connexion d'un client
