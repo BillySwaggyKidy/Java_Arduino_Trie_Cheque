@@ -6,6 +6,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*; // permet de pouvoir faire du réseau avec java
 import server.arduino.Com_arduino;
+import server.meuble_classement.Meuble;
 
 import com.fazecast.jSerialComm.*;
 
@@ -22,12 +23,6 @@ public class Serveur_trie extends Thread
     private static HashMap<String, Serveur_trie> tableau_nom = new HashMap<String, Serveur_trie>(); // stocke les noms d'utilisateurs dans un tableau
 
 
-
-    private int algorithme_trie(int num_donnee) // permet de trouver la case pour trier le cheque
-    {
-        return num_donnee;
-    }
-
     /*private void display_port()
     {
         SerialPort[] ports = SerialPort.getCommPorts();
@@ -37,12 +32,12 @@ public class Serveur_trie extends Thread
         }
     }*/
 
-    private void envoie_donnee_arduino(Integer num_led) throws Exception 
+    private void envoie_donnee_arduino(Cheque _cheque, Meuble _meuble) throws Exception 
     // permet d'envoyer les données de l'algorithme à la partie Arduino13
     {
-
-        Com_arduino Arduino = new Com_arduino(10,2);
-        Arduino.lightLed(num_led);
+        System.out.println("Il faut ranger le chèque dans la case: " + _meuble.putChequeToMeuble(_cheque));
+        Com_arduino Arduino = new Com_arduino(25,2);
+        //Arduino.lightLed(num_led);
 
         /*display_port();
         SerialPort sp = SerialPort.getCommPort("/dev/cu.usbmodem1411"); // port de la carte aruino Mega 2650
@@ -115,14 +110,15 @@ public class Serveur_trie extends Thread
 			ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
         )
         {
+            Meuble meuble_test = new Meuble(25);
             while(true)
             {
                 Object o = in.readObject();
                 if (o instanceof Cheque)
                 {
                     Cheque cheque = (Cheque) o;
-                    System.out.println("info: " + cheque.get_Num_case());
-                    envoie_donnee_arduino(algorithme_trie(cheque.get_Num_case()));
+                    System.out.println("info: " + cheque.get_trigramme());
+                    envoie_donnee_arduino(cheque, meuble_test);
                 }
             }
            /* else 
@@ -162,7 +158,9 @@ public class Serveur_trie extends Thread
         )
         {
             scanner.nextLine();
-            Com_arduino test = new Com_arduino(10,2);
+            Com_arduino test = new Com_arduino(25,2);
+            Meuble Meuble_cheque = new Meuble(25);
+
             System.out.println("Voulez vous tester les LED? taper la commande: test");
             String cmd = scanner.nextLine();
             test.lightAllLed(cmd);

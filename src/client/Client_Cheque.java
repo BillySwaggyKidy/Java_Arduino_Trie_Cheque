@@ -51,9 +51,9 @@ public class Client_cheque
         {
             while (true)
             {
-                System.out.println("Veillez mettre le num d'un nombre d'une case: ");
-                int nbr = userInput.nextInt();
-                Cheque test_cheque = new Cheque(nbr);
+                System.out.println("Veillez mettre le Trigramme du chèque: ");
+                String trigramme = userInput.nextLine();
+                Cheque test_cheque = new Cheque(trigramme);
                 out.writeObject(test_cheque); // on écrie un objet Cheque dans le out
                 Client_cheque.out = out; // on envoie un message de type Cheque au serveurs
                 System.out.println("Chargement...");

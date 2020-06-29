@@ -146,10 +146,10 @@ void DataLightLED()
       {
         if (is_a_number(tab_carac[b]))
         {
-          pin_a_allumer = 10*(pin_a_allumer) + (ascii2int(0,tab_carac[b]));
+          pin_a_allumer = 10*(pin_a_allumer) + (tab_carac[b](int) - 48);
         }
       }
-      digitalWrite(pin_a_allumer + 1,LOW); // LED OFF
+      digitalWrite(pin_a_allumer + 1,LOW);
 
       
     }
