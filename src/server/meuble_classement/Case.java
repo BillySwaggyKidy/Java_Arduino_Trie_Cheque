@@ -7,32 +7,32 @@ import cheque.Cheque;
 
 public class Case
 {
-    private ArrayList<Cheque> tab_Cheque; // tableau d'objet Cheque que peut contenir une case dans le Meuble
+    private ArrayList<Cheque> tabCheque; // tableau d'objet Cheque que peut contenir une case dans le Meuble
     private String etiquette = ""; // permet de donner un attribut à la case pour la classification
 
     public Case()
     {
-        tab_Cheque = new ArrayList<>();
+        tabCheque = new ArrayList<>();
     }
 
     public ArrayList<Cheque> getTabCheque()
     {
-        return tab_Cheque;
+        return tabCheque;
     }
 
     public void displayListCheque()
     {
         System.out.println("La Case " + etiquette + " contient: ");
-        for (int i = 0 ; i < tab_Cheque.size() ; i++)
+        for (int i = 0 ; i < tabCheque.size() ; i++)
         {
-            System.out.print(" " + tab_Cheque.get(i).get_trigramme());
+            System.out.print(" " + tabCheque.get(i).get_trigramme());
         }
         System.out.println("");
     }
 
     public void putChequeToCase(Cheque cheque) // on met l'objet chèque dans le ArrayList
     {
-        tab_Cheque.add(cheque);
+        tabCheque.add(cheque);
     }
 
     public String getEtiquette()
@@ -47,7 +47,7 @@ public class Case
 
     public boolean caseEmpty() // vérifie si la case n'a pas de chèque
     {
-        return tab_Cheque.isEmpty();
+        return tabCheque.isEmpty();
     }
 
 }

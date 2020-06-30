@@ -17,10 +17,10 @@ import com.fazecast.jSerialComm.*;
 
 public class Serveur_trie extends Thread
 {
-    String name; // nom du client connecté au thread serveur
-    Socket clientSocket;
-    ObjectOutputStream out;
-    private static HashMap<String, Serveur_trie> tableau_nom = new HashMap<String, Serveur_trie>(); // stocke les noms d'utilisateurs dans un tableau
+    private String name; // nom du client connecté au thread serveur
+    private Socket clientSocket;
+    private ObjectOutputStream out;
+    private static HashMap<String, Serveur_trie> tableauNom = new HashMap<String, Serveur_trie>(); // stocke les noms d'utilisateurs dans un tableau
 
 
     /*private void display_port()
@@ -35,11 +35,94 @@ public class Serveur_trie extends Thread
     private void envoie_donnee_arduino(Cheque _cheque, Meuble _meuble) throws Exception 
     // permet d'envoyer les données de l'algorithme à la partie Arduino13
     {
-        System.out.println("Il faut ranger le chèque dans la case: " + _meuble.putChequeToMeuble(_cheque));
+        int case_a_ranger = _meuble.putChequeToMeuble(_cheque);
+        System.out.println("Il faut ranger le chèque dans la case: " + case_a_ranger);
         Com_arduino Arduino = new Com_arduino(25,2);
-        //Arduino.lightLed(num_led);
+        Arduino.lightLed(case_a_ranger);
 
-        /*display_port();
+    }
+
+    public void run() // fonction du thread
+    {
+
+        try (
+			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+			ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+        )
+        {
+            Meuble meuble_test = new Meuble(25);
+            while(true)
+            {
+                Object o = in.readObject();
+                if (o instanceof Cheque)
+                {
+                    Cheque cheque = (Cheque) o;
+                    System.out.println("info: " + cheque.get_trigramme());
+                    envoie_donnee_arduino(cheque, meuble_test);
+                }
+            }
+           /* else 
+            if(o instanceof String) 
+            {
+                if( ((String) o).equals("BYE") )
+                {
+                    break;
+                }
+            }*/
+        }
+        catch (IOException e)
+        {
+            System.err.println("Exception while closing connection!");
+        }
+        catch (Exception e)
+        {
+
+        }
+
+    }
+
+    public Serveur_trie(Socket clientSocket)
+    {
+        this.clientSocket = clientSocket;
+    }
+
+    public static void main(String[] args) throws IOException, Exception // a executer dans un autre ordinateur
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Bienvenue au serveur, Veillez saisir...");
+        System.out.println("Votre numéro de port >"); // ATTENTION, si vous avez pas le root privilege alors prenez un numéro de port > 1024
+        int num_port = scanner.nextInt(); // on enregistre le numéro du port
+
+        try (
+        ServerSocket serverSocket = new ServerSocket(num_port); // on crée l'application serveur sur un port
+        )
+        {
+            scanner.nextLine();
+            Com_arduino test = new Com_arduino(25,2);
+            Meuble Meuble_cheque = new Meuble(25);
+
+            System.out.println("Voulez vous tester les LED? taper la commande: test");
+            String cmd = scanner.nextLine();
+            test.lightAllLed(cmd);
+            while (true)
+            {
+                Serveur_trie server = new Serveur_trie(serverSocket.accept()); // on attend et accepte la demande de connexion d'un client
+                System.out.println("Client connecté");
+                server.start();
+            }
+        }
+        catch (IOException e)
+        {
+            System.err.println("Exception caught when trying to listen on port " + num_port);
+            System.err.println(e.getMessage());
+        }
+        System.out.println("fermeture du serveur");
+        scanner.close();
+
+    }
+}
+
+/*display_port();
         SerialPort sp = SerialPort.getCommPort("/dev/cu.usbmodem1411"); // port de la carte aruino Mega 2650
         System.out.println(sp.getDescriptivePortName());
         sp.setComPortParameters(9600, 8, 1, 0); // default connection settings for Arduino
@@ -97,87 +180,3 @@ public class Serveur_trie extends Thread
             return;
           
         }*/
-
-        
-
-    }
-
-    public void run() // fonction du thread
-    {
-
-        try (
-			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-        )
-        {
-            Meuble meuble_test = new Meuble(25);
-            while(true)
-            {
-                Object o = in.readObject();
-                if (o instanceof Cheque)
-                {
-                    Cheque cheque = (Cheque) o;
-                    System.out.println("info: " + cheque.get_trigramme());
-                    envoie_donnee_arduino(cheque, meuble_test);
-                }
-            }
-           /* else 
-            if(o instanceof String) 
-            {
-                if( ((String) o).equals("BYE") )
-                {
-                    break;
-                }
-            }*/
-        }
-        catch (IOException e)
-        {
-            System.err.println("Exception while closing connection!");
-        }
-        catch (Exception e)
-        {
-
-        }
-
-    }
-
-    public Serveur_trie(Socket clientSocket)
-    {
-        this.clientSocket = clientSocket;
-    }
-
-    public static void main(String[] args) throws IOException, Exception // a executer dans un autre ordinateur
-    {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Bienvenue au serveur, Veillez saisir...");
-        System.out.println("Votre numéro de port >"); // ATTENTION, si vous avez pas le root privilege alors prenez un numéro de port > 1024
-        int num_port = scanner.nextInt(); // on enregistre le numéro du
-
-        try (
-        ServerSocket serverSocket = new ServerSocket(num_port); // on crée l'application serveur sur un port
-        )
-        {
-            scanner.nextLine();
-            Com_arduino test = new Com_arduino(25,2);
-            Meuble Meuble_cheque = new Meuble(25);
-
-            System.out.println("Voulez vous tester les LED? taper la commande: test");
-            String cmd = scanner.nextLine();
-            test.lightAllLed(cmd);
-            while (true)
-            {
-                Serveur_trie server = new Serveur_trie(serverSocket.accept()); // on attend et accepte la demande de connexion d'un client
-                System.out.println("Client connecté");
-                server.start();
-            }
-        }
-        catch (IOException e)
-        {
-            System.err.println("Exception caught when trying to listen on port " + num_port);
-            System.err.println(e.getMessage());
-        }
-        System.out.println("fermeture du serveur");
-        scanner.close();
-
-    }
-}

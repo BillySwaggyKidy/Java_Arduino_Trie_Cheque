@@ -26,12 +26,12 @@ public class Cheque implements Serializable, java.lang.Comparable<Cheque>
         trigramme = _trigramme;
     }
 
-    public String get_num_Compte()
+    public String get_numCompte()
     {
         return numCompte;
     }
 
-    public void set_num_Compte(String _numCompte)
+    public void set_numCompte(String _numCompte)
     {
         numCompte = _numCompte;
     }

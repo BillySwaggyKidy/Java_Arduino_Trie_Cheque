@@ -10,21 +10,21 @@ import java.io.*;
 public class Com_arduino 
 {
     private String[] cmd = new String[3]; // correspond au chemin pour lancer le programme python
-    private int nbr_Led; // nombre de pin utilisé pour les LED.
-    private int ref_pin; // pin de départ jusqu'au dernier pin pour les LED.
+    private int nbrLed; // nombre de pin utilisé pour les LED.
+    private int refPin; // pin de départ jusqu'au dernier pin pour les LED.
 
-    public Com_arduino(int _nbr_Led, int _ref_pin) throws Exception
+    public Com_arduino(int _nbrLed, int _refpin) throws Exception
     {
-        nbr_Led = _nbr_Led;
-        ref_pin = _ref_pin;
+        nbrLed = _nbrLed;
+        refPin = _refpin;
         cmd[0] = "python3";
         cmd[1] = "arduino/Python_arduino.py";
-        System.out.println("Arduino possédant: " + nbr_Led + " et commençant par la Led: " + ref_pin);
+        System.out.println("Arduino possédant: " + nbrLed + " et commençant par la Led: " + refPin);
     }
 
     public void lightLed(int num_led) throws IOException // permet d'allumer un led de 
     {
-        if (num_led >= 1 && num_led <= nbr_Led)
+        if (num_led >= 1 && num_led <= nbrLed)
         {
             System.out.println("on allume la led: " + num_led);
             cmd[2] = Integer.toString(num_led);

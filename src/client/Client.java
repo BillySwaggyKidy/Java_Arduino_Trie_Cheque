@@ -5,15 +5,15 @@ import java.net.*; // permet de pouvoir faire du réseau avec java
 
 import cheque.Cheque;
 
-// javac -cp c:\../../classes  -d ../../classes Client_cheque.java
-// java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar client.Client_cheque localhost 1300 
+// javac -cp c:\../../classes  -d ../../classes Client.java
+// java -cp .:c:\../../classes:c:\../../classes/com/fazecast/jSerialComm-2.6.2.jar client.Client localhost 1300 
 
-public class Client_cheque 
+public class Client 
 {
     private static String hostName; // nom de l'hôte du serveur (147.94.7.152)
     private static int numPort; // le numéro du port que vous voulez utilisez pour établir la connexion avec le serveur
     private static ObjectOutputStream out;
-    private static String nom_util;
+    private static String nomUtil;
     private static Scanner userInput = new Scanner(System.in);
 
 
@@ -38,8 +38,8 @@ public class Client_cheque
         hostName = args[0]; // on met le paramettre 1 de la ligne de commande dans la valeur hostName
         numPort = Integer.parseInt(args[1]); // on met le paramettre 2 de la ligne de commande dans la valeur num_port
         System.out.println("Veillez saisir votre nom: ");
-        nom_util = userInput.nextLine();
-        System.out.println("Connection au Serveur [" + "hôte: " + hostName + ", port: " + numPort + "] sous le nom: " + nom_util);
+        nomUtil = userInput.nextLine();
+        System.out.println("Connection au Serveur [" + "hôte: " + hostName + ", port: " + numPort + "] sous le nom: " + nomUtil);
 
 
         try 
@@ -55,7 +55,7 @@ public class Client_cheque
                 String trigramme = userInput.nextLine();
                 Cheque test_cheque = new Cheque(trigramme);
                 out.writeObject(test_cheque); // on écrie un objet Cheque dans le out
-                Client_cheque.out = out; // on envoie un message de type Cheque au serveurs
+                Client.out = out; // on envoie un message de type Cheque au serveurs
                 System.out.println("Chargement...");
                 Thread.sleep(1000);
             }

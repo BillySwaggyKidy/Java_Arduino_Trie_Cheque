@@ -6,23 +6,23 @@ import cheque.Cheque;
 
 public class Meuble 
 {
-    private Case [] tab_Case;
-    private boolean mode_Alphabet = false;
+    private Case [] tabCase;
+    private boolean modeAlphabet = false;
 
     public Meuble(int nbr_case)
     {
-        tab_Case = new Case[nbr_case];
-        for (int i = 0; i < tab_Case.length ; i++)
+        tabCase = new Case[nbr_case];
+        for (int i = 0; i < tabCase.length ; i++)
         {
-            tab_Case[i] = new Case();
+            tabCase[i] = new Case();
         }
         modeAlphabétique();
         displayEtiquette();
     }
 
-    public Case[] get_tab_Case()
+    public Case[] get_tabCase()
     {
-        return tab_Case;
+        return tabCase;
     }
 
     public int putChequeToMeuble(Cheque cheque)
@@ -32,18 +32,18 @@ public class Meuble
 
     public void displayEtiquette() // permet d'afficher toutes les etiquettes des cases du meuble
     {
-        for (int i = 0; i < tab_Case.length ; i++)
+        for (int i = 0; i < tabCase.length ; i++)
         {   
             int ii = i + 1;
-            System.out.println("Case numéro: " + ii + " etiquette: " + tab_Case[i].getEtiquette());
+            System.out.println("Case numéro: " + ii + " etiquette: " + tabCase[i].getEtiquette());
         }
     }
 
     public boolean meubleEmpty() // vérifie si le meuble ne possède plus de chèque.
     {
-        for (int i = 0; i < tab_Case.length ; i++)
+        for (int i = 0; i < tabCase.length ; i++)
         {
-            if (tab_Case[i].caseEmpty() == false) // si la case a encore des chèques.
+            if (tabCase[i].caseEmpty() == false) // si la case a encore des chèques.
             {
                 return false;
             }
@@ -62,16 +62,16 @@ public class Meuble
             {
                 if (i < alphabet.length - 3)
                 {
-                    tab_Case[i].setEtiquette(String.valueOf(alphabet[i])); // on met la lettre dans la variable étiquette de la case
+                    tabCase[i].setEtiquette(String.valueOf(alphabet[i])); // on met la lettre dans la variable étiquette de la case
                 }
                 else
                 {
-                    tab_Case[i].setEtiquette(String.valueOf(alphabet[i]) + String.valueOf(alphabet[i+1]) + String.valueOf(alphabet[i+2]));
+                    tabCase[i].setEtiquette(String.valueOf(alphabet[i]) + String.valueOf(alphabet[i+1]) + String.valueOf(alphabet[i+2]));
                     // on met les trois dernière lettres dans l'étiquette de la dernière case.
                     break;
                 }
             }
-            mode_Alphabet = true;
+            modeAlphabet = true;
         }
         else
         {
@@ -86,26 +86,26 @@ public class Meuble
 
     private int algorithme_Alphabétique(Cheque cheque) // algorithme stockant un chèque dans le meuble et retournant le numéro de la case où allumer la LED
     {   
-        if (mode_Alphabet == true)
+        if (modeAlphabet == true)
         {
-            for (int i = 0; i < tab_Case.length; i++)
+            for (int i = 0; i < tabCase.length; i++)
             {   
                 if (Character.isDigit(cheque.get_trigramme().charAt(0))) // si la première lettre du trigramme est un chiffre
                 {
-                    tab_Case[0].putChequeToCase(cheque); // on met le cheque dans la case des nombres
-                    Collections.sort(tab_Case[i].getTabCheque());
-                    tab_Case[0].displayListCheque();
+                    tabCase[0].putChequeToCase(cheque); // on met le cheque dans la case des nombres
+                    Collections.sort(tabCase[i].getTabCheque());
+                    tabCase[0].displayListCheque();
                     return 0 + 1;
                 }
                 else // sinon dans tous les cas, c'est une lettre alors
                 {
-                    for (int b = 0; b < tab_Case[i].getEtiquette().length(); b++)
+                    for (int b = 0; b < tabCase[i].getEtiquette().length(); b++)
                     {
-                        if (cheque.get_trigramme().charAt(0) == tab_Case[i].getEtiquette().charAt(b))
+                        if (cheque.get_trigramme().charAt(0) == tabCase[i].getEtiquette().charAt(b))
                         {
-                            tab_Case[i].putChequeToCase(cheque); // on met le cheque dans la case.
-                            Collections.sort(tab_Case[i].getTabCheque());
-                            tab_Case[i].displayListCheque();
+                            tabCase[i].putChequeToCase(cheque); // on met le cheque dans la case.
+                            Collections.sort(tabCase[i].getTabCheque());
+                            tabCase[i].displayListCheque();
                             return i + 1;
                         }
                     }
@@ -117,7 +117,7 @@ public class Meuble
         return 0;
     }
 
-    private void algorithme_CaseCopropriété()
+    private int algorithme_CaseCopropriété()
     {
 
     }
