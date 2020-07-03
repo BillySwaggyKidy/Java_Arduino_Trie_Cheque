@@ -21,7 +21,7 @@ public class Serveur_trie extends Thread
     private Socket clientSocket;
     private ObjectOutputStream out;
     private static HashMap<String, Serveur_trie> tableauNom = new HashMap<String, Serveur_trie>(); // stocke les noms d'utilisateurs dans un tableau
-
+    static Meuble meuble = new Meuble(25); // Objet Meuble Verrou du HashMap serverThreads et out
 
     /*private void display_port()
     {
@@ -50,25 +50,19 @@ public class Serveur_trie extends Thread
 			ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
         )
         {
-            Meuble meuble_test = new Meuble(25);
             while(true)
             {
                 Object o = in.readObject();
                 if (o instanceof Cheque)
                 {
-                    Cheque cheque = (Cheque) o;
-                    System.out.println("info: " + cheque.get_trigramme());
-                    envoie_donnee_arduino(cheque, meuble_test);
+                    synchronized(meuble) // on réserve le meuble pour son opération
+                    {
+                        Cheque cheque = (Cheque) o;
+                        System.out.println("info: " + cheque.get_trigramme());
+                        envoie_donnee_arduino(cheque, meuble);
+                    }
                 }
             }
-           /* else 
-            if(o instanceof String) 
-            {
-                if( ((String) o).equals("BYE") )
-                {
-                    break;
-                }
-            }*/
         }
         catch (IOException e)
         {
@@ -99,8 +93,6 @@ public class Serveur_trie extends Thread
         {
             scanner.nextLine();
             Com_arduino test = new Com_arduino(25,2);
-            Meuble Meuble_cheque = new Meuble(25);
-
             System.out.println("Voulez vous tester les LED? taper la commande: test");
             String cmd = scanner.nextLine();
             test.lightAllLed(cmd);

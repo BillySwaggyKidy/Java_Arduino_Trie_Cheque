@@ -84,13 +84,15 @@ public class Meuble
 
     }
 
-    private int algorithme_Alphabétique(Cheque cheque) // algorithme stockant un chèque dans le meuble et retournant le numéro de la case où allumer la LED
+    private int algorithme_Alphabétique(Cheque cheque) 
+    // algorithme stockant un chèque dans le meuble et retournant le numéro de la case où allumer la LED
     {   
         if (modeAlphabet == true)
         {
             for (int i = 0; i < tabCase.length; i++)
             {   
-                if (Character.isDigit(cheque.get_trigramme().charAt(0))) // si la première lettre du trigramme est un chiffre
+                if (Character.isDigit(cheque.get_trigramme().charAt(0))) 
+                // si la première lettre du trigramme est un chiffre
                 {
                     tabCase[0].putChequeToCase(cheque); // on met le cheque dans la case des nombres
                     Collections.sort(tabCase[i].getTabCheque());
