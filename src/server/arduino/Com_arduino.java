@@ -11,15 +11,13 @@ public class Com_arduino
 {
     private String[] cmd = new String[3]; // correspond au chemin pour lancer le programme python
     private int nbrLed; // nombre de pin utilisé pour les LED.
-    private int refPin; // pin de départ jusqu'au dernier pin pour les LED.
 
     public Com_arduino(int _nbrLed, int _refpin) throws Exception
     {
         nbrLed = _nbrLed;
-        refPin = _refpin;
         cmd[0] = "python3";
         cmd[1] = "arduino/Python_arduino.py";
-        System.out.println("Arduino possédant: " + nbrLed + " et commençant par la Led: " + refPin);
+        System.out.println("Arduino possédant: " + nbrLed );
     }
 
     public void lightLed(int num_led) throws IOException // permet d'allumer un led de 
